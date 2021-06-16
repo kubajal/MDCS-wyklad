@@ -6,29 +6,7 @@ zdrowy = "Zdrowy"
 chory = "Chory"
 ozdrowialy = "Ozdrowialy"
 
-def wrapper_symulacji(parametry = {}):
-  nazwa="symulacja"
-  gamma=0.05
-  beta=0.10
-  koniec_symulacji=200
-  liczba_symulacji=5
-  krawedzie="krawedzie.csv"
-  wezly="wezly.csv"
-  if("nazwa" in parametry):
-    nazwa = parametry["nazwa"]
-  if("gamma" in parametry):
-    gamma = parametry["gamma"]
-  if("beta" in parametry):
-    beta = parametry["beta"]
-  if("koniec_symulacji" in parametry):
-    koniec_symulacji = parametry["koniec_symulacji"]
-  if("liczba_symulacji" in parametry):
-    liczba_symulacji = parametry["liczba_symulacji"]
-  if("krawedzie" in parametry):
-    krawedzie = parametry["krawedzie"]
-  if("wezly" in parametry):
-    wezly = parametry["wezly"]
-
+def wczytaj_graf(krawedzie, wezly):
   with open(krawedzie, newline='') as plik:
     reader = csv.reader(plik, delimiter=',')
     graf = {}
@@ -55,6 +33,32 @@ def wrapper_symulacji(parametry = {}):
         poczatkowy_stan[i] = chory
       i = i + 1
   poczatkowy_stan["numer"] = 0
+  return [graf, poczatkowy_stan]
+
+def wrapper_symulacji(parametry = {}):
+  nazwa="symulacja"
+  gamma=0.05
+  beta=0.10
+  koniec_symulacji=200
+  liczba_symulacji=5
+  krawedzie="krawedzie.csv"
+  wezly="wezly.csv"
+  if("nazwa" in parametry):
+    nazwa = parametry["nazwa"]
+  if("gamma" in parametry):
+    gamma = parametry["gamma"]
+  if("beta" in parametry):
+    beta = parametry["beta"]
+  if("koniec_symulacji" in parametry):
+    koniec_symulacji = parametry["koniec_symulacji"]
+  if("liczba_symulacji" in parametry):
+    liczba_symulacji = parametry["liczba_symulacji"]
+  if("krawedzie" in parametry):
+    krawedzie = parametry["krawedzie"]
+  if("wezly" in parametry):
+    wezly = parametry["wezly"]
+
+  [graf, poczatkowy_stan] = wczytaj_graf(krawedzie, wezly)
 
   def symuluj(koniec_symulacji=200):
     stary_stan = poczatkowy_stan
