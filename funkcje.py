@@ -83,11 +83,11 @@ def animuj(graf, kroki):
     for wezel in graf:
       if(wezel != "numer"):
         wezly_id = wezly_id + [wezel]
-        if(krok[wezel] == Status.Chory):
+        if(krok[wezel] == chory):
           kolory = kolory + ["red"]
-        elif(krok[wezel] == Status.Zdrowy):
+        elif(krok[wezel] == zdrowy):
           kolory = kolory + ["green"]
-        elif(krok[wezel] == Status.Ozdrowialy):
+        elif(krok[wezel] == ozdrowialy):
           kolory = kolory + ["blue"]
         else:
           raise Exception("cos poszlo bardzo zle")
