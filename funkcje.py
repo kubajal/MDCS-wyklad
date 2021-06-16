@@ -4,11 +4,6 @@ from matplotlib.image import AxesImage
 import matplotlib.animation as animation
 from networkx import exception
 
-class Status:
-  Zdrowy = "Zdrowy"
-  Chory = "Chory"
-  Odporny = "Odporny"
-
 def konwertuj_do_networkX(graf):
   G = nx.DiGraph()
   wezly = graf.keys()
@@ -42,21 +37,23 @@ def animuj(graf, kroki):
   print("Konwertuje do networkX")
   G = konwertuj_do_networkX(graf)
   print("Obliczam pozycje")
-  position = nx.circular_layout(G, scale=20)
+  position = nx.spring_layout(G, iterations=10)
   figure, ax = plt.subplots(figsize=(10,8))
   def rysuj_krok(krok):
     ax.clear()
+    # krok = k.copy()
+    # print(krok)
     numer = krok["numer"]
     kolory = []
     wezly_id = []
     for wezel in graf:
       if(wezel != "numer"):
         wezly_id = wezly_id + [wezel]
-        if(krok[wezel][0] == Status.Chory):
+        if(krok[wezel] == Status.Chory):
           kolory = kolory + ["red"]
-        elif(krok[wezel][0] == Status.Zdrowy):
+        elif(krok[wezel] == Status.Zdrowy):
           kolory = kolory + ["green"]
-        elif(krok[wezel][0] == Status.Odporny):
+        elif(krok[wezel] == Status.Ozdrowialy):
           kolory = kolory + ["blue"]
         else:
           raise Exception("cos poszlo bardzo zle")
@@ -65,5 +62,8 @@ def animuj(graf, kroki):
     # plt.show()
   
   print("Rysuje animacje")
+  # for krok in kroki:
+  #   rysuj_krok(krok)
   ani = animation.FuncAnimation(figure, rysuj_krok, kroki, repeat=False)
   ani.save('./symulacja.gif', writer='imagemagick')
+  #plt.show()
