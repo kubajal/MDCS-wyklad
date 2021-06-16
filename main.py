@@ -1,39 +1,5 @@
-import csv
 import random
 from funkcje import *
-
-zdrowy = "Zdrowy"
-chory = "Chory"
-ozdrowialy = "Ozdrowialy"
-
-def wczytaj_graf(krawedzie, wezly):
-  with open(krawedzie, newline='') as plik:
-    reader = csv.reader(plik, delimiter=',')
-    graf = {}
-    for tekst in reader:
-      poczatek = int(tekst[0])
-      koniec = int(tekst[1])
-      if(poczatek not in graf):
-        graf[poczatek] = [koniec]
-      else:
-        graf[poczatek] = graf[poczatek] + [koniec]
-      if(koniec not in graf):
-        graf[koniec] = [poczatek]
-      else:
-        graf[koniec] = graf[koniec] + [poczatek]
-
-  poczatkowy_stan = {}
-  with open(wezly, newline='') as plik:
-    reader = csv.reader(plik, delimiter=',')
-    i = 0
-    for tekst in reader:
-      if(tekst[0] == "1"):
-        poczatkowy_stan[i] = zdrowy
-      else:
-        poczatkowy_stan[i] = chory
-      i = i + 1
-  poczatkowy_stan["numer"] = 0
-  return [graf, poczatkowy_stan]
 
 def wrapper_symulacji(parametry = {}):
   nazwa="symulacja"
