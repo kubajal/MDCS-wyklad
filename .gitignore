@@ -3,3 +3,4 @@ __pycache__/
 symulacje.csv
 symulacja.gif
 __pycache__/funkcje.cpython-37.pyc
+*.csv
