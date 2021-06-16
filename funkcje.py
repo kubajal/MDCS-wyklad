@@ -1,4 +1,5 @@
 import networkx as nx
+import statistics
 import matplotlib.pyplot as plt
 from matplotlib.image import AxesImage
 import matplotlib.animation as animation
@@ -101,3 +102,31 @@ def animuj(graf, kroki):
   ani = animation.FuncAnimation(figure, rysuj_krok, kroki, repeat=False)
   ani.save('./symulacja.gif', writer='imagemagick')
   #plt.show()
+
+def generuj_graf_losowy(plik_wyjsciowy, n=100, avg=10):
+  p = avg/n
+  graf = nx.gnp_random_graph(n,p)
+  while(not nx.is_connected(graf)):
+    graf = nx.gnp_random_graph(n,p)
+  with open(plik_wyjsciowy, 'w') as plik:
+    nx.write_edgelist(graf, plik_wyjsciowy, delimiter=',', data=False)
+  stopnie = [graf.degree(wezel) for wezel in graf.nodes()]
+  plt.hist(stopnie)
+  print("sredni stopien: " + str(statistics.mean(stopnie)))
+  plt.show()
+
+generuj_graf_losowy("losowy.csv")
+
+def generuj_graf_bezskalowy(plik_wyjsciowy, n=100, avg=5):
+  m = avg
+  graf = nx.barabasi_albert_graph(n, m)
+  while(not nx.is_connected(graf)):
+    graf = nx.barabasi_albert_graph(n, m)
+  with open(plik_wyjsciowy, 'w') as plik:
+    nx.write_edgelist(graf, plik_wyjsciowy, delimiter=',', data=False)
+  stopnie = [graf.degree(wezel) for wezel in graf.nodes()]
+  plt.hist(stopnie)
+  print("sredni stopien: " + str(statistics.mean(stopnie)))
+  plt.show()
+
+generuj_graf_bezskalowy("bezskalowy.csv")
