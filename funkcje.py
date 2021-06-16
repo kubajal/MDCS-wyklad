@@ -61,7 +61,7 @@ def animuj(graf, kroki):
     nx.draw_networkx(G, position, nodelist=wezly_id, node_color=kolory)
     # plt.show()
   
-  print("Rysuje animacje")
+  # print("Rysuje animacje")
   # for krok in kroki:
   #   rysuj_krok(krok)
   ani = animation.FuncAnimation(figure, rysuj_krok, kroki, repeat=False)

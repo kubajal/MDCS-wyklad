@@ -2,8 +2,6 @@ import csv
 import random
 from funkcje import *
 
-koniec_symulacji = 200
-
 Zdrowy = "Zdrowy"
 Chory = "Chory"
 Ozdrowialy = "Ozdrowialy"
@@ -47,11 +45,13 @@ gamma = 0.05
 beta = 0.10
 r = beta / gamma
 
-def symuluj():
+def symuluj(koniec_symulacji=200):
   stary_stan = poczatkowy_stan
-  kroki_symulacji = [stary_stan]
+  kroki = [stary_stan]
+  chorzy = []
+  ozdrowiali = []
   
-  for t in range(1, koniec_symulacji):
+  for t in range(0, koniec_symulacji):
     nowy_krok = {}
     nowy_krok["numer"] = t
     for chore_osoby_t in graf:
@@ -75,16 +75,40 @@ def symuluj():
     liczba_chorych_t = len(chore_osoby_t)
     ozdrowiale_osoby_t = [chore_osoby_t for chore_osoby_t in nowy_krok if nowy_krok[chore_osoby_t] == Ozdrowialy]
     liczba_ozdrowialych_t = len(ozdrowiale_osoby_t)
-    print("S:I:R (t=" + str(t) + "): " + str(100-liczba_chorych_t-liczba_ozdrowialych_t) + ":" + str(liczba_chorych_t) + ":" + str(liczba_ozdrowialych_t))
+    # print("S:I:R (t=" + str(t) + "): " + str(100-liczba_chorych_t-liczba_ozdrowialych_t) + ":" + str(liczba_chorych_t) + ":" + str(liczba_ozdrowialych_t))
     
-    kroki_symulacji = kroki_symulacji + [nowy_krok]
-    # print(nowy_krok)
-    # print("###")
+    kroki = kroki + [nowy_krok]
+    chorzy = chorzy + [liczba_chorych_t]
+    ozdrowiali = ozdrowiali + [liczba_ozdrowialych_t]
     stary_stan = nowy_krok
-  
 
+  return {
+    "chorzy": chorzy,
+    "ozdrowiali": ozdrowiali,
+    "kroki": kroki
+  }
 
-# print(kroki_symulacji)
-# animuj(graf, kroki_symulacji)
-# print(kroki_symulacji)
-# animuj(graf, kroki_symulacji)
+wynik = {
+  "chorzy": [],
+  "ozdrowiali": [],
+  "iteracje": [],
+  "nr_symulacji": []
+}
+
+koniec_symulacji = 200
+liczba_symulacji = 5
+for i in range(0, liczba_symulacji):
+  symulacja = symuluj(koniec_symulacji)
+  wynik["chorzy"] = wynik["chorzy"] + symulacja["chorzy"]
+  wynik["ozdrowiali"] = wynik["ozdrowiali"] + symulacja["ozdrowiali"]
+  wynik["iteracje"] = wynik["iteracje"] + [j for j in range(0, koniec_symulacji)]
+  wynik["nr_symulacji"] = wynik["nr_symulacji"] + [i for j in range(0, koniec_symulacji)]
+
+with open('symulacje.csv', 'w') as plik:
+  plik.write("chorzy,ozdrowiali,iteracje,nr_symulacji\n")
+  for i in range(0, koniec_symulacji * liczba_symulacji):
+    wiersz = str(wynik["chorzy"][i])
+    wiersz = wiersz + "," + str(wynik["ozdrowiali"][i])
+    wiersz = wiersz + "," + str(wynik["iteracje"][i])
+    wiersz = wiersz + "," + str(wynik["nr_symulacji"][i]) + '\n'
+    plik.write(wiersz)
