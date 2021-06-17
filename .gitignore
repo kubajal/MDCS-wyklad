@@ -5,3 +5,4 @@ symulacja.gif
 __pycache__/funkcje.cpython-37.pyc
 *.csv
 .vscode/settings.json
+*.png
