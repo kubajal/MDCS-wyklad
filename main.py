@@ -7,8 +7,8 @@ def wrapper_symulacji(gamma=0.05, beta=0.10, koniec_symulacji=200, liczba_symula
   liczba_wezlow = len(graf.keys())
 
   def symuluj(koniec_symulacji=200):
-    indeks_chorego = random.randint(0, liczba_wezlow)
-    stary_stan = {i: (stan_chory if(i == indeks_chorego) else stan_zdrowy) for i in range(0, liczba_wezlow)}
+    indeksy_chorych = random.sample(range(0, liczba_wezlow), 10)
+    stary_stan = {i: (stan_chory if(i in indeksy_chorych) else stan_zdrowy) for i in range(0, liczba_wezlow)}
     
     kroki = [stary_stan]
     chorzy = []

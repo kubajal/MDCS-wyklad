@@ -92,7 +92,7 @@ def animuj(graf, kroki):
   ani.save('./symulacja.gif', writer='imagemagick')
   #plt.show()
 
-def generuj_graf_erdos(plik_wyjsciowy="wejscie/erdos.csv", n=100, avg=5):
+def generuj_graf_erdos(plik_wyjsciowy="wejscie/erdos.csv", n=100, avg=10):
   p = avg/n
   graf = nx.gnp_random_graph(n,p)
   while(not nx.is_connected(graf)):
@@ -104,7 +104,7 @@ def generuj_graf_erdos(plik_wyjsciowy="wejscie/erdos.csv", n=100, avg=5):
   print("sredni stopien: " + str(statistics.mean(stopnie)))
   plt.show()
 
-def generuj_graf_barabasi(plik_wyjsciowy="wejscie/barabasi.csv", n=100, avg=2.5):
+def generuj_graf_barabasi(plik_wyjsciowy="wejscie/barabasi.csv", n=100, avg=5):
   m = avg
   graf = nx.barabasi_albert_graph(n, m)
   while(not nx.is_connected(graf)):
