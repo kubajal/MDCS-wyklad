@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-pliki = ["bezskalowa.csv"]
+pliki = ["wyjscie/barabasi_wynik.csv", "wyjscie/erdos_wynik.csv"]
 for plik in pliki:
   dane = pd.read_csv(plik, delimiter=",")
   dane_zgroupowane = dane.groupby("nr_symulacji")

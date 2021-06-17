@@ -1,7 +1,7 @@
 import random
 from funkcje import *
 
-def wrapper_symulacji(gamma=0.05, beta=0.10, koniec_symulacji=200, liczba_symulacji=5, plik_wejsciowy="krawedzie.csv", plik_wyjsciowy="wyjscie.csv"):
+def wrapper_symulacji(gamma=0.05, beta=0.10, koniec_symulacji=200, liczba_symulacji=100, plik_wejsciowy="krawedzie.csv", plik_wyjsciowy="wyjscie.csv"):
 
   graf = wczytaj_graf(plik_wejsciowy)
   liczba_wezlow = len(graf.keys())
