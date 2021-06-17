@@ -6,11 +6,11 @@ import matplotlib.animation as animation
 from networkx import exception
 import csv
 
-zdrowy = "Zdrowy"
-chory = "Chory"
-ozdrowialy = "Ozdrowialy"
+stan_zdrowy = "Zdrowy"
+stan_chory = "Chory"
+stan_ozdrowialy = "Ozdrowialy"
 
-def wczytaj_graf(krawedzie, wezly):
+def wczytaj_graf(krawedzie):
   with open(krawedzie, newline='') as plik:
     reader = csv.reader(plik, delimiter=',')
     graf = {}
@@ -26,18 +26,7 @@ def wczytaj_graf(krawedzie, wezly):
       else:
         graf[koniec] = graf[koniec] + [poczatek]
 
-  poczatkowy_stan = {}
-  with open(wezly, newline='') as plik:
-    reader = csv.reader(plik, delimiter=',')
-    i = 0
-    for tekst in reader:
-      if(tekst[0] == "1"):
-        poczatkowy_stan[i] = zdrowy
-      else:
-        poczatkowy_stan[i] = chory
-      i = i + 1
-  poczatkowy_stan["numer"] = 0
-  return [graf, poczatkowy_stan]
+  return graf
 
 def konwertuj_do_networkX(graf):
   G = nx.DiGraph()
@@ -84,11 +73,11 @@ def animuj(graf, kroki):
     for wezel in graf:
       if(wezel != "numer"):
         wezly_id = wezly_id + [wezel]
-        if(krok[wezel] == chory):
+        if(krok[wezel] == stan_chory):
           kolory = kolory + ["red"]
-        elif(krok[wezel] == zdrowy):
+        elif(krok[wezel] == stan_zdrowy):
           kolory = kolory + ["green"]
-        elif(krok[wezel] == ozdrowialy):
+        elif(krok[wezel] == stan_ozdrowialy):
           kolory = kolory + ["blue"]
         else:
           raise Exception("cos poszlo bardzo zle")
@@ -103,7 +92,7 @@ def animuj(graf, kroki):
   ani.save('./symulacja.gif', writer='imagemagick')
   #plt.show()
 
-def generuj_graf_losowy(plik_wyjsciowy, n=100, avg=10):
+def generuj_graf_erdos(plik_wyjsciowy="wejscie/erdos.csv", n=100, avg=5):
   p = avg/n
   graf = nx.gnp_random_graph(n,p)
   while(not nx.is_connected(graf)):
@@ -115,9 +104,7 @@ def generuj_graf_losowy(plik_wyjsciowy, n=100, avg=10):
   print("sredni stopien: " + str(statistics.mean(stopnie)))
   plt.show()
 
-generuj_graf_losowy("losowy.csv")
-
-def generuj_graf_bezskalowy(plik_wyjsciowy, n=100, avg=5):
+def generuj_graf_barabasi(plik_wyjsciowy="wejscie/barabasi.csv", n=100, avg=2.5):
   m = avg
   graf = nx.barabasi_albert_graph(n, m)
   while(not nx.is_connected(graf)):
@@ -128,5 +115,3 @@ def generuj_graf_bezskalowy(plik_wyjsciowy, n=100, avg=5):
   plt.hist(stopnie)
   print("sredni stopien: " + str(statistics.mean(stopnie)))
   plt.show()
-
-generuj_graf_bezskalowy("bezskalowy.csv")

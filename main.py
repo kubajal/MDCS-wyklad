@@ -1,67 +1,51 @@
 import random
 from funkcje import *
 
-def wrapper_symulacji(parametry = {}):
-  nazwa="symulacja"
-  gamma=0.05
-  beta=0.10
-  koniec_symulacji=200
-  liczba_symulacji=5
-  krawedzie="krawedzie.csv"
-  wezly="wezly.csv"
-  if("nazwa" in parametry):
-    nazwa = parametry["nazwa"]
-  if("gamma" in parametry):
-    gamma = parametry["gamma"]
-  if("beta" in parametry):
-    beta = parametry["beta"]
-  if("koniec_symulacji" in parametry):
-    koniec_symulacji = parametry["koniec_symulacji"]
-  if("liczba_symulacji" in parametry):
-    liczba_symulacji = parametry["liczba_symulacji"]
-  if("krawedzie" in parametry):
-    krawedzie = parametry["krawedzie"]
-  if("wezly" in parametry):
-    wezly = parametry["wezly"]
+def wrapper_symulacji(gamma=0.05, beta=0.10, koniec_symulacji=200, liczba_symulacji=5, plik_wejsciowy="krawedzie.csv", plik_wyjsciowy="wyjscie.csv"):
 
-  [graf, poczatkowy_stan] = wczytaj_graf(krawedzie, wezly)
+  graf = wczytaj_graf(plik_wejsciowy)
+  liczba_wezlow = len(graf.keys())
 
   def symuluj(koniec_symulacji=200):
-    stary_stan = poczatkowy_stan
+    indeks_chorego = random.randint(0, liczba_wezlow)
+    stary_stan = {i: (stan_chory if(i == indeks_chorego) else stan_zdrowy) for i in range(0, liczba_wezlow)}
+    
     kroki = [stary_stan]
     chorzy = []
     ozdrowiali = []
     
     for t in range(0, koniec_symulacji):
-      nowy_krok = {}
-      nowy_krok["numer"] = t
-      for chore_osoby_t in graf:
-        if(stary_stan[chore_osoby_t] == chory):
+      nowy_stan = {}
+      nowy_stan["numer"] = t
+      for wezel in graf:
+        if(stary_stan[wezel] == stan_chory):
           if(random.random() < gamma):
-            nowy_krok[chore_osoby_t] = ozdrowialy
+            nowy_stan[wezel] = stan_ozdrowialy
           else:
-            nowy_krok[chore_osoby_t] = chory
-        elif(stary_stan[chore_osoby_t] == zdrowy):
-          sasiedzi = [chore_osoby_t for chore_osoby_t in graf]
-          chorzy_sasiedzi = [chore_osoby_t for chore_osoby_t in graf if stary_stan[chore_osoby_t] == chory]
+            nowy_stan[wezel] = stan_chory
+        elif(stary_stan[wezel] == stan_zdrowy):
+          sasiedzi = [sasiad for sasiad in graf[wezel]]
+          chorzy_sasiedzi = [sasiad for sasiad in graf[wezel] if stary_stan[sasiad] == stan_chory]
           prog = beta * float(len(chorzy_sasiedzi)) / float(len(sasiedzi))
           # print("prog=" + str(prog) + ", r=" + str(r))
           if(random.random() < prog):
-            nowy_krok[chore_osoby_t] = chory
+            nowy_stan[wezel] = stan_chory
           else:
-            nowy_krok[chore_osoby_t] = zdrowy
-        elif(stary_stan[chore_osoby_t] == ozdrowialy):
-            nowy_krok[chore_osoby_t] = ozdrowialy
-      chore_osoby_t = [chore_osoby_t for chore_osoby_t in nowy_krok if nowy_krok[chore_osoby_t] == chory]
+            nowy_stan[wezel] = stan_zdrowy
+        elif(stary_stan[wezel] == stan_ozdrowialy):
+            nowy_stan[wezel] = stan_ozdrowialy
+        else:
+          raise Exception("cos poszlo bardzo zle")
+      chore_osoby_t = [wezel for wezel in nowy_stan if nowy_stan[wezel] == stan_chory]
       liczba_chorych_t = len(chore_osoby_t)
-      ozdrowiale_osoby_t = [chore_osoby_t for chore_osoby_t in nowy_krok if nowy_krok[chore_osoby_t] == ozdrowialy]
+      ozdrowiale_osoby_t = [wezel for wezel in nowy_stan if nowy_stan[wezel] == stan_ozdrowialy]
       liczba_ozdrowialych_t = len(ozdrowiale_osoby_t)
       # print("S:I:R (t=" + str(t) + "): " + str(100-liczba_chorych_t-liczba_ozdrowialych_t) + ":" + str(liczba_chorych_t) + ":" + str(liczba_ozdrowialych_t))
       
-      kroki = kroki + [nowy_krok]
+      kroki = kroki + [nowy_stan]
       chorzy = chorzy + [liczba_chorych_t]
       ozdrowiali = ozdrowiali + [liczba_ozdrowialych_t]
-      stary_stan = nowy_krok
+      stary_stan = nowy_stan
 
     return {
       "chorzy": chorzy,
@@ -83,7 +67,7 @@ def wrapper_symulacji(parametry = {}):
     wynik["iteracje"] = wynik["iteracje"] + [j for j in range(0, koniec_symulacji)]
     wynik["nr_symulacji"] = wynik["nr_symulacji"] + [i for j in range(0, koniec_symulacji)]
 
-  with open(nazwa + ".csv", 'w') as plik:
+  with open(plik_wyjsciowy, 'w') as plik:
     plik.write("chorzy,ozdrowiali,iteracje,nr_symulacji\n")
     tekst=""
     for i in range(0, koniec_symulacji * liczba_symulacji):
@@ -94,13 +78,10 @@ def wrapper_symulacji(parametry = {}):
     plik.write(tekst)
 
 konfiguracja = [
-  {
-    "nazwa": "bezskalowa",
-    "wezly": "wezly.csv",
-    "krawedzie": "krawedzie.csv",
-    "liczba_symulacji": 100
-  }
+  ["wejscie/barabasi.csv", "wyjscie/barabasi_wynik.csv"],
+  ["wejscie/erdos.csv", "wyjscie/erdos_wynik.csv"]
 ]
 
 for symulacja in konfiguracja:
-  wrapper_symulacji(symulacja)
+  print(symulacja)
+  wrapper_symulacji(plik_wejsciowy=symulacja[0], plik_wyjsciowy=symulacja[1])
